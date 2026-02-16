@@ -30,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+import { Card as TCard, Row as TRow, Col as TCol, Statistic as TStatistic } from 'tdesign-vue-next';
 </script>
 
 <style scoped lang="less">

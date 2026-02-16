@@ -8,15 +8,6 @@ import { TDesignResolver } from 'unplugin-vue-components/resolvers';
 export default defineConfig({
   plugins: [
     vue(),
-    AutoImport({
-      resolvers: [TDesignResolver()],
-      imports: ['vue', 'vue-router', 'pinia'],
-      dts: 'src/auto-imports.d.ts',
-    }),
-    Components({
-      resolvers: [TDesignResolver()],
-      dts: 'src/components.d.ts',
-    }),
   ],
   resolve: {
     alias: {

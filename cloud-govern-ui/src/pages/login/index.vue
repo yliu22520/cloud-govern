@@ -64,6 +64,7 @@
 import { ref, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { MessagePlugin } from 'tdesign-vue-next';
+import { Form as TForm, FormItem as TFormItem, Input as TInput, Button as TButton, Icon as TIcon } from 'tdesign-vue-next';
 import { useUserStore } from '@/store/user';
 
 const router = useRouter();

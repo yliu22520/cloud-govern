@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { Result as TResult, Button as TButton } from 'tdesign-vue-next';
 
 const router = useRouter();
 </script>

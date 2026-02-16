@@ -44,6 +44,19 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import {
+  Layout as TLayout,
+  Aside as TAside,
+  Header as THeader,
+  Content as TContent,
+  Menu as TMenu,
+  MenuItem as TMenuItem,
+  Icon as TIcon,
+  Breadcrumb as TBreadcrumb,
+  BreadcrumbItem as TBreadcrumbItem,
+  Dropdown as TDropdown,
+  Button as TButton,
+} from 'tdesign-vue-next';
 import { useUserStore } from '@/store/user';
 
 const router = useRouter();
