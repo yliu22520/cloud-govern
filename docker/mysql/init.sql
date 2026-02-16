@@ -166,9 +166,9 @@ CREATE TABLE `alert_rule` (
 -- 11. 初始化数据
 -- ---------------------------------------------------
 
--- 初始化管理员用户 (密码: admin123, 使用 BCrypt 加密)
+-- 初始化管理员用户 (密码: admin123, 使用 Hutool BCrypt 加密)
 INSERT INTO `sys_user` (`username`, `password`, `nickname`, `email`, `status`) VALUES
-('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iKTNDp8G3vQMWR.XHGJ.Z5QX.ZQq', '系统管理员', 'admin@example.com', 1);
+('admin', '$2a$10$Bwrxq2hzqlmxRSMNNqz.ZuhZpgXCa/g.X9YKvp.e9vWeGFdMXBN.2', '系统管理员', 'admin@example.com', 1);
 
 -- 初始化角色
 INSERT INTO `sys_role` (`role_name`, `role_key`, `description`, `sort`) VALUES

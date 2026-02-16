@@ -1,0 +1,128 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: cloud-govern-gateway
+  profiles:
+    active: dev
+  config:
+    import:
+      - optional:nacos:${spring.application.name}.yml?refresh=true
+  cloud:
+    nacos:
+      # 服务发现配置
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:}
+        group: DEFAULT_GROUP
+      # 配置中心配置
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:}
+        group: DEFAULT_GROUP
+        file-extension: yml
+        import-check:
+          enabled: false
+
+    # Gateway 配置
+    gateway:
+      # 服务发现路由
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      # 路由规则
+      routes:
+        # 认证服务
+        - id: cloud-govern-auth
+          uri: lb://cloud-govern-auth
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=0
+
+        # 系统服务
+        - id: cloud-govern-system
+          uri: lb://cloud-govern-system
+          predicates:
+            - Path=/system/**
+          filters:
+            - StripPrefix=0
+
+        # 服务注册管理
+        - id: cloud-govern-registry
+          uri: lb://cloud-govern-registry
+          predicates:
+            - Path=/registry/**
+          filters:
+            - StripPrefix=0
+
+        # 配置中心管理
+        - id: cloud-govern-config
+          uri: lb://cloud-govern-config
+          predicates:
+            - Path=/config/**
+          filters:
+            - StripPrefix=0
+
+        # 服务监控
+        - id: cloud-govern-monitor
+          uri: lb://cloud-govern-monitor
+          predicates:
+            - Path=/monitor/**
+          filters:
+            - StripPrefix=0
+
+  # Redis 配置
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 10000ms
+
+# Sa-Token 配置
+sa-token:
+  # Token 名称
+  token-name: Authorization
+  # Token 有效期（秒），默认30天
+  timeout: 2592000
+  # Token 临时有效期（指定时间内无操作过期）
+  active-timeout: -1
+  # 是否允许同一账号多地登录
+  is-concurrent: true
+  # 多人登录同一账号时，是否共用一个 Token
+  is-share: true
+  # Token 风格
+  token-style: uuid
+  # 是否输出操作日志
+  is-log: true
+  # 是否从 Cookie 中读取 Token
+  is-read-cookie: false
+  # 是否从请求体里读取 Token
+  is-read-body: false
+  # 是否从 Header 中读取 Token
+  is-read-header: true
+  # Token 前缀
+  token-prefix: Bearer
+
+# Actuator 配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.cloud.govern: DEBUG
+    org.springframework.cloud.gateway: DEBUG
