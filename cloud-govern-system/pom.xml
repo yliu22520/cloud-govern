@@ -63,6 +63,12 @@
             <artifactId>sa-token-spring-boot3-starter</artifactId>
         </dependency>
 
+        <!-- Sa-Token 整合 Redis -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redis-jackson</artifactId>
+        </dependency>
+
         <!-- Spring Boot Actuator -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

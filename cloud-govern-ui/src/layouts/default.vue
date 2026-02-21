@@ -4,13 +4,22 @@
       <div class="logo">
         <h1>Cloud Govern</h1>
       </div>
-      <t-menu theme="dark" :value="activeMenu">
+      <t-menu theme="dark" :value="activeMenu" :expanded="expandedMenu" @expand="handleMenuExpand">
         <t-menu-item value="dashboard" @click="router.push('/dashboard')">
           <template #icon>
             <t-icon name="home" />
           </template>
           首页
         </t-menu-item>
+        <t-submenu value="system">
+          <template #icon>
+            <t-icon name="setting" />
+          </template>
+          <template #title>系统管理</template>
+          <t-menu-item value="user" @click="router.push('/system/user')">用户管理</t-menu-item>
+          <t-menu-item value="role" @click="router.push('/system/role')">角色管理</t-menu-item>
+          <t-menu-item value="menu" @click="router.push('/system/menu')">菜单管理</t-menu-item>
+        </t-submenu>
       </t-menu>
     </t-aside>
 
@@ -18,7 +27,9 @@
       <t-header class="app-header">
         <div class="header-left">
           <t-breadcrumb>
-            <t-breadcrumb-item>首页</t-breadcrumb-item>
+            <t-breadcrumb-item v-for="item in breadcrumbs" :key="item.path">
+              {{ item.title }}
+            </t-breadcrumb-item>
           </t-breadcrumb>
         </div>
         <div class="header-right">
@@ -42,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import {
   Layout as TLayout,
@@ -51,22 +62,40 @@ import {
   Content as TContent,
   Menu as TMenu,
   MenuItem as TMenuItem,
+  Submenu as TSubmenu,
   Icon as TIcon,
   Breadcrumb as TBreadcrumb,
   BreadcrumbItem as TBreadcrumbItem,
   Dropdown as TDropdown,
   Button as TButton,
 } from 'tdesign-vue-next';
+import type { DropdownOption } from 'tdesign-vue-next';
 import { useUserStore } from '@/store/user';
 
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
 
+const expandedMenu = ref<string[]>([]);
+
 const activeMenu = computed(() => {
   const path = route.path;
   if (path.startsWith('/dashboard')) return 'dashboard';
+  if (path.startsWith('/system/user')) return 'user';
+  if (path.startsWith('/system/role')) return 'role';
+  if (path.startsWith('/system/menu')) return 'menu';
   return '';
+});
+
+const breadcrumbs = computed(() => {
+  const matched = route.matched.filter((item) => item.meta?.title);
+  const result = [{ path: '/dashboard', title: '首页' }];
+  matched.forEach((item) => {
+    if (item.meta?.title && item.meta.title !== '首页') {
+      result.push({ path: item.path, title: item.meta.title as string });
+    }
+  });
+  return result;
 });
 
 const userOptions = [
@@ -74,8 +103,12 @@ const userOptions = [
   { content: '退出登录', value: 'logout' },
 ];
 
-async function handleUserClick({ value }: { value: string }) {
-  if (value === 'logout') {
+function handleMenuExpand(value: (string | number)[]) {
+  expandedMenu.value = value.map(String);
+}
+
+async function handleUserClick(dropdownItem: DropdownOption) {
+  if (dropdownItem.value === 'logout') {
     await userStore.logoutAction();
     router.push('/login');
   }
@@ -84,6 +117,10 @@ async function handleUserClick({ value }: { value: string }) {
 onMounted(() => {
   if (!userStore.userInfo) {
     userStore.fetchUserInfo();
+  }
+  // 自动展开当前菜单的父级
+  if (route.path.startsWith('/system')) {
+    expandedMenu.value = ['system'];
   }
 });
 </script>

@@ -1,5 +1,6 @@
 package com.cloud.govern.auth.service;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -59,9 +60,12 @@ public class AuthService {
         // 登录
         StpUtil.login(user.getId());
 
+        // 获取 Token 信息
+        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+
         // 构建响应
         LoginVO vo = new LoginVO();
-        vo.setAccessToken(StpUtil.getTokenValue());
+        vo.setAccessToken(tokenInfo.getTokenValue());
         vo.setUserId(user.getId());
         vo.setUsername(user.getUsername());
         vo.setNickname(user.getNickname());

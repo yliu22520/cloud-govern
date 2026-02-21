@@ -81,6 +81,13 @@
             <version>${sa-token.version}</version>
         </dependency>
 
+        <!-- Sa-Token 整合 Redis -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redis-jackson</artifactId>
+            <version>${sa-token.version}</version>
+        </dependency>
+
         <!-- Redis (Sa-Token 会话存储) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

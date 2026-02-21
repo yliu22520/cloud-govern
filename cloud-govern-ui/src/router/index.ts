@@ -20,6 +20,31 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/dashboard/index.vue'),
         meta: { title: '首页', icon: 'home' },
       },
+      {
+        path: 'system',
+        name: 'System',
+        meta: { title: '系统管理', icon: 'setting' },
+        children: [
+          {
+            path: 'user',
+            name: 'User',
+            component: () => import('@/pages/system/user/index.vue'),
+            meta: { title: '用户管理', icon: 'user' },
+          },
+          {
+            path: 'role',
+            name: 'Role',
+            component: () => import('@/pages/system/role/index.vue'),
+            meta: { title: '角色管理', icon: 'user-group' },
+          },
+          {
+            path: 'menu',
+            name: 'Menu',
+            component: () => import('@/pages/system/menu/index.vue'),
+            meta: { title: '菜单管理', icon: 'menu' },
+          },
+        ],
+      },
     ],
   },
   {

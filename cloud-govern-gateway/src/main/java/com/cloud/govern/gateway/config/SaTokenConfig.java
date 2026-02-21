@@ -36,6 +36,10 @@ public class SaTokenConfig {
                 )
                 // 认证函数：每次请求执行
                 .setAuth(obj -> {
+                    // 打印调试信息
+                    String tokenValue = StpUtil.getTokenValue();
+                    System.out.println("Token: " + tokenValue + ", isLogin: " + StpUtil.isLogin());
+                    
                     // 登录校验
                     SaRouter.match("/**", r -> StpUtil.checkLogin());
                 })
