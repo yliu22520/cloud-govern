@@ -9,6 +9,7 @@ import com.cloud.govern.common.utils.PageUtils;
 import com.cloud.govern.system.dto.RoleDTO;
 import com.cloud.govern.system.dto.RoleQueryDTO;
 import com.cloud.govern.system.dto.RoleVO;
+import com.cloud.govern.system.entity.SysMenu;
 import com.cloud.govern.system.entity.SysRole;
 import com.cloud.govern.system.entity.SysRoleMenu;
 import com.cloud.govern.system.mapper.SysMenuMapper;
@@ -222,7 +223,23 @@ public class SysRoleService {
             return;
         }
 
-        for (Long menuId : menuIds) {
+        // 过滤无效的菜单ID（null、0或负数）
+        List<Long> validMenuIds = menuIds.stream()
+                .filter(menuId -> menuId != null && menuId > 0)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (validMenuIds.isEmpty()) {
+            return;
+        }
+
+        // 只保存数据库中存在的菜单
+        List<Long> existingMenuIds = sysMenuMapper.selectList(
+                new LambdaQueryWrapper<SysMenu>()
+                        .in(SysMenu::getId, validMenuIds)
+        ).stream().map(SysMenu::getId).collect(Collectors.toList());
+
+        for (Long menuId : existingMenuIds) {
             SysRoleMenu roleMenu = new SysRoleMenu();
             roleMenu.setRoleId(roleId);
             roleMenu.setMenuId(menuId);

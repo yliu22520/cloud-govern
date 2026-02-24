@@ -42,14 +42,17 @@ request.interceptors.response.use(
       return data.data as any;
     }
 
-    // 业务失败
-    MessagePlugin.error(data.message || '请求失败');
-    return Promise.reject(new Error(data.message));
+    // 业务失败 - 兼容 msg 和 message 字段
+    const errorMsg = (data as any).msg || data.message || '请求失败';
+    MessagePlugin.error(errorMsg);
+    return Promise.reject(new Error(errorMsg));
   },
   (error) => {
     const { response } = error;
 
     if (response) {
+      // 兼容 msg 和 message 字段
+      const errorMsg = response.data?.msg || response.data?.message || '请求失败';
       switch (response.status) {
         case 401:
           MessagePlugin.warning('登录已过期，请重新登录');
@@ -63,10 +66,10 @@ request.interceptors.response.use(
           MessagePlugin.error('资源不存在');
           break;
         case 500:
-          MessagePlugin.error('服务器错误');
+          MessagePlugin.error(errorMsg);
           break;
         default:
-          MessagePlugin.error(response.data?.message || '请求失败');
+          MessagePlugin.error(errorMsg);
       }
     } else {
       MessagePlugin.error('网络错误，请检查网络连接');

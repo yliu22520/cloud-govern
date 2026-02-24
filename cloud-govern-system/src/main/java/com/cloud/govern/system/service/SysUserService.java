@@ -53,7 +53,7 @@ public class SysUserService {
         wrapper.like(StringUtils.isNotBlank(query.getNickname()), SysUser::getNickname, query.getNickname());
         wrapper.like(StringUtils.isNotBlank(query.getPhone()), SysUser::getPhone, query.getPhone());
         wrapper.eq(query.getStatus() != null, SysUser::getStatus, query.getStatus());
-        wrapper.orderByDesc(SysUser::getCreateTime);
+        wrapper.orderByAsc(SysUser::getCreateTime);
 
         Page<SysUser> result = sysUserMapper.selectPage(page, wrapper);
 
@@ -86,13 +86,10 @@ public class SysUserService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Long create(UserDTO dto) {
-        // 检查用户名是否已存在
-        Long count = sysUserMapper.selectCount(
-                new LambdaQueryWrapper<SysUser>()
-                        .eq(SysUser::getUsername, dto.getUsername())
-        );
-        if (count > 0) {
-            throw new BusinessException(ErrorCode.USER_EXISTS);
+        // 检查用户名是否已存在（包含已删除的用户，因为数据库唯一键约束）
+        SysUser existingUser = sysUserMapper.selectByUsernameIgnoreDelete(dto.getUsername());
+        if (existingUser != null) {
+            throw new BusinessException(ErrorCode.USER_EXISTS, "用户名已存在");
         }
 
         // 创建用户
