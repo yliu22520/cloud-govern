@@ -237,7 +237,7 @@ public class SysRoleService {
         List<Long> existingMenuIds = sysMenuMapper.selectList(
                 new LambdaQueryWrapper<SysMenu>()
                         .in(SysMenu::getId, validMenuIds)
-        ).stream().map(SysMenu::getId).collect(Collectors.toList());
+        ).stream().map(SysMenu::getId).toList();
 
         for (Long menuId : existingMenuIds) {
             SysRoleMenu roleMenu = new SysRoleMenu();
